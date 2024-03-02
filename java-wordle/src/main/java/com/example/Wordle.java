@@ -10,17 +10,32 @@ import java.io.FileNotFoundException;
  * @author Marcus Clements, @M4rcusBC on GitHub
  * @since 2024-02-27
  */
+/**
+ * The Wordle class represents a simple word guessing game.
+ * It prompts the user to guess a word of a specified length
+ * and provides feedback on the correctness of the guess.
+ * The program allows the user to change the word length
+ * and provides a limited number of guesses.
+ */
 public class Wordle {
 
-    private static boolean enableExpletives = false;
     private static boolean win = false;
     private static final String ANSI_GREEN = "\u001B[32m";
     private static final String ANSI_YELLOW = "\u001B[33m";
     private static final String ANSI_RED = "\u001B[31m";
     private static final String ANSI_RESET = "\033[0m";
 
-    private static String[] previousGuesses = new String[5];
+    private static String[] previousGuesses = new String[5]; // size 5 for 5 total guesses
 
+    /**
+     * The main method is the entry point of the Java program.
+     * It prompts the user to guess a word of a specified length
+     * and provides feedback on the correctness of the guess.
+     * The program allows the user to change the word length
+     * and provides a limited number of guesses.
+     *
+     * @param args The command-line arguments passed to the program.
+     */
     public static void main(String[] args) {
 
         String[] words = getWords("java-wordle/src/main/resources/dictionary5.txt");
@@ -69,7 +84,6 @@ public class Wordle {
 
         int guessCount = 0;
         int guessesLeft = 5;
-        boolean win = false;
         String guess = "";
 
         buildOutput(guessesLeft, wordLength);
@@ -87,27 +101,38 @@ public class Wordle {
             guessCount++;
             guessesLeft--;
             buildOutput(guessesLeft, wordLength);
+            System.out.println(selectedWord);
         }
 
         if (win) {
             buildOutput(guessesLeft, wordLength);
-            System.out.printf("Congratulations! You guessed the word using only %d guesses!\n", guessCount);
-            //System.out.println("Would you like to play again? (y/n): ");
+            System.out.printf("Congratulations! You guessed the word using %s%d %s!\n",
+                    (guessCount < 4) ? "only " : "", guessCount, (guessCount > 1) ? "guesses" : "guess");
+            // System.out.println("Would you like to play again? (y/n): ");
         } else {
             buildOutput(guessesLeft, wordLength);
             System.out.println(
                     "Sorry, you didn't guess the word within five guesses. The word was " + selectedWord + ".");
-            //System.out.println("Would you like to play again? (y/n): ");
+            // System.out.println("Would you like to play again? (y/n): ");
         }
+
+        input.close();
 
     }
 
+    /**
+     * Prints the output of the Wordle game, including the game title, previous
+     * guesses, and remaining guesses.
+     * 
+     * @param guessesLeft The number of remaining guesses.
+     * @param wordLength  The length of the word to be guessed.
+     */
     static void buildOutput(int guessesLeft, int wordLength) {
 
         System.out.print("\033[H\033[2J");
         System.out.flush();
         if (guessesLeft == 5) {
-            System.out.println("Welcome to my Homemade Wordle Game from Scratch!");
+            System.out.println("Welcome to my Homemade Wordle Game!");
             System.out.println("I have a word in mind, and you have to guess it. You have five tries. Good luck!");
         }
         System.out.println(" ________                __ __        ");
@@ -140,7 +165,8 @@ public class Wordle {
      * possible words to be used for the game.
      * 
      * @param filepath the path to the file containing the dictionary of words
-     * @return String[] containing the dictionary of words to be used for the game
+     * @return String[] containing the dictionary of words to be used for the game -
+     *         returns empty String array if exception is thrown
      * @throws FileNotFoundException if the file is not found
      */
     static String[] getWords(String filepath) {
@@ -158,6 +184,13 @@ public class Wordle {
         return new String[0];
     }
 
+    /**
+     * Checks if a given word is present in the dictionary.
+     *
+     * @param word       the word to be checked
+     * @param dictionary the array of words in the dictionary
+     * @return true if the word is present in the dictionary, false otherwise
+     */
     static boolean isInDictionary(String word, String[] dictionary) {
         for (String dictWord : dictionary) {
             if (dictWord.equalsIgnoreCase(word)) {
@@ -167,6 +200,18 @@ public class Wordle {
         return false;
     }
 
+    /**
+     * Processes the guess and compares it with the word to generate a result
+     * string.
+     * The result string contains colored characters representing correct and
+     * incorrect guesses.
+     * 
+     * @param guess      The user's guess.
+     * @param word       The word to be guessed.
+     * @param wordLength The length of the word.
+     * @return The result string with colored characters representing correct and
+     *         incorrect guesses.
+     */
     static String processGuess(String guess, String word, int wordLength) {
         String result = "";
         int[] wordFrequency = new int[26]; // Assuming only lowercase English letters are used
@@ -197,5 +242,4 @@ public class Wordle {
         }
         return result;
     }
-
 }
