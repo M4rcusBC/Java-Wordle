@@ -80,6 +80,7 @@ public class Wordle {
          * 
          */
 
+        // Select a random word from the dictionary
         String selectedWord = words[(int) (Math.random() * (words.length - 1)) + 1];
 
         int guessCount = 0;
@@ -101,7 +102,6 @@ public class Wordle {
             guessCount++;
             guessesLeft--;
             buildOutput(guessesLeft, wordLength);
-            System.out.println(selectedWord);
         }
 
         if (win) {
